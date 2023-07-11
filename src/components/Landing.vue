@@ -11,15 +11,15 @@
 </template>
 <script setup>
 import { authentication } from '../components/firebase/auth'
-import { fetchData } from '../components/firebase/firestoredb'
+import { findAccount } from '../components/firebase/firestoredb'
 import { useRouter } from "vue-router"
-import { useUidStore } from '../stores/store';
+
 const router = useRouter()
 
 
 const signIn = async () => {
     await authentication()
-    await fetchData(useUidStore().user)
+    await findAccount()
     router.push('/main')
 }
 

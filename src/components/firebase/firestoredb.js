@@ -1,21 +1,27 @@
 import { getFirestore, collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { app } from './firebase'
+import { useUidStore } from '../../stores/store';
 const db = getFirestore(app);
 
-export const fetchData = async (user) => {
+export const findAccount = async () => {
 
-    const docRef = doc(db, "todo", user.uid);
+    const docRef = doc(db, "todo", useUidStore().uid);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-        //TODO existing user, fetch existing tasks
-        console.log('existing user, show tasks');
+        fetchData()
     } else {
-        await setDoc(doc(db, "todo", user.uid), {
-            username: user.displayName,
-            uid: user.uid,
+        await setDoc(doc(db, "todo", useUidStore().uid), {
+            username: useUidStore().user.displayName,
+            uid: useUidStore().uid,
             tasks: null
         });
         console.log('user created');
     }
+}
+
+const fetchData = () => {
+    useUidStore().uid
+    useUidStore().user
+
 }

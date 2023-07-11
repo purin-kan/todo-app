@@ -10,4 +10,4 @@ export const useUidStore = defineStore('uid', () => {
     return { uid, user }
 })
 
-    //TODO: persistent store to save login 
+    //TODO: pinia persistent store to save login 
