@@ -1,12 +1,19 @@
 <template>
     <div>
-        <h2>main app page here</h2>
-        <p>{{ user }}</p>
+        <h2>ToDo</h2>
+        <p>a bunch fo tesdt </p>
+
     </div>
 </template>
-<script setup>
-import { user } from '../components/firebase/auth.js'
 
+<script setup>
 
 
 </script>
+
+<style>
+body {
+    text-align: start;
+    align-items: flex-start;
+}
+</style>

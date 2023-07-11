@@ -1,7 +1,6 @@
 import { initializeApp } from "firebase/app";
 // import { } from 'firebase/firestore';
 // import { } from 'firebase/messaging';
-// import { } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBZc1eroxJ56qDb-dSygL035KZ_60T2XAw",

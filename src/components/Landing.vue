@@ -6,16 +6,20 @@
         <br> <br>
 
         <h6>Please sign-in to continue</h6>
-        <button class="btn btn-info mt-1" @click="initialize()">Google sign-in</button>
+        <button class="btn btn-info mt-1" @click="signIn()">Google sign-in</button>
     </div>
 </template>
 <script setup>
-import { signIn } from '../components/firebase/auth.js'
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { authentication } from '../components/firebase/auth'
+import { fetchData } from '../components/firebase/firestoredb'
+import { useRouter } from "vue-router"
+import { useUidStore } from '../stores/store';
+const router = useRouter()
 
-const initialize = async () => {
-    await signIn()
+
+const signIn = async () => {
+    await authentication()
+    await fetchData(useUidStore().user)
     router.push('/main')
 }
 
