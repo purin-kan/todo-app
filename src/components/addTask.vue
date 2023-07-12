@@ -46,7 +46,7 @@
 
         <div class="mb-3">
             <label class="form-label">File</label>
-            <input class="form-control" type="file" v-on:change="taskFile">
+            <input class="form-control" type="file" id="formFile" ref="file">
         </div>
 
     </div>
@@ -57,6 +57,7 @@ import { ref, defineExpose, defineEmits, watch } from 'vue'
 import { addTaskToDb } from './firebase/firestoredb'
 import FlatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
+import { saveFile, downloadURL } from './firebase/storage';
 
 const flatpickrConfig = {
     altInput: true,
@@ -75,14 +76,25 @@ const taskDescription = ref(null)
 const taskDueDate = ref(null)
 const taskRemind = ref(null)
 const taskPriority = ref('none')
-// <!-- TODO upload file to firestore -->
 const taskFile = ref(null)
 const taskFinish = ref(false)
 
 
 
+const file = ref()
+let selectedfile = null
+const saveTask = async () => {
+    selectedfile = null
+    if (!!file.value.files[0]) {
+        selectedfile = file.value.files[0];
+    
+        await saveFile(selectedfile)
+        taskFile.value = downloadURL
+    }
 
-const saveTask = () => {
+
+
+
     const task = {
         name: taskName.value,
         description: taskDescription.value,

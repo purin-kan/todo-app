@@ -94,11 +94,12 @@
                     }}</span>
                     <span v-if="!!selectedTaskDetails.remindDate"><strong>Reminder:</strong> {{
                         selectedTaskDetails.remindDate }}</span>
-                    <span><strong>Priority:</strong> {{ selectedTaskDetails.priority }}</span>
+                    <span v-if="selectedTaskDetails.priority != 'none'"><strong>Priority:</strong> {{ selectedTaskDetails.priority }}</span>
                     <br>
-                    <!-- TODO: display file -->
+                    <!-- TODO: display file check if image and show-->
                     <div>
-                        {{ selectedTaskDetails.file }}
+                        
+                        <a v-if="!!selectedTaskDetails.file" class="btn btn-outline-dark btn-sm" :href="[selectedTaskDetails.file]" target="_blank">Download File</a>
                     </div>
 
                 </div>
