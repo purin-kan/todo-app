@@ -10,22 +10,21 @@
             <textarea class="form-control" v-model="taskDescription"></textarea>
         </div>
 
-        <!-- TODO add date picker to duedate and remind me -->
         <div class="mb-3">
             <label class="form-label">Due Date</label>
-            <input type="text" class="form-control" v-model="taskDueDate">
+            <flat-pickr class="form-control form-control-sm" v-model="taskDueDate" :config="flatpickrConfig"></flat-pickr>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Remind Date</label>
-            <input type="text" class="form-control" v-model="taskRemind">
+            <flat-pickr class="form-control form-control-sm" v-model="taskRemind" :config="flatpickrConfig"></flat-pickr>
         </div>
 
         <label class="form-label">Priority</label>
         <div>
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="none"
-                    v-model="taskPriority">
+                    v-model="taskPriority" checked>
                 <label class="form-check-label" for="inlineRadio1">None</label>
             </div>
             <div class="form-check form-check-inline">
@@ -49,22 +48,66 @@
             <label class="form-label">File</label>
             <input class="form-control" type="file" v-on:change="taskFile">
         </div>
-        
+
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineExpose, defineEmits, watch } from 'vue'
+import { addTaskToDb } from './firebase/firestoredb'
+import FlatPickr from 'vue-flatpickr-component';
+import 'flatpickr/dist/flatpickr.css';
 
-const taskName = ref()
-const taskDescription = ref()
-const taskDueDate = ref()
-const taskRemind = ref()
-const taskPriority = ref()
-// <!-- TODO upload file to firestore  with file -->
-const taskFile = ref()
+const flatpickrConfig = {
+    altInput: true,
+    altFormat: 'h:i K   D\\, M j\\, Y',
+    wrap: true,
+    clickOpens: true,
+    allowInput: false,
+    enableTime: true,
+    // hour:minute(24h) date/month/year
+    dateFormat: 'H:i j\\/n\\/Y',
+    minDate: 'today',
+};
+
+const taskName = ref(null)
+const taskDescription = ref(null)
+const taskDueDate = ref(null)
+const taskRemind = ref(null)
+const taskPriority = ref(null)
+// <!-- TODO upload file to firestore -->
+const taskFile = ref(null)
 const taskFinish = ref(false)
 
 
+
+
+const saveTask = () => {
+    const task = {
+        name: taskName.value,
+        description: taskDescription.value,
+        dueDate: taskDueDate.value,
+        remindDate: taskRemind.value,
+        priority: taskPriority.value,
+        file: taskFile.value,
+        finished: taskFinish.value
+    }
+    addTaskToDb(task)
+}
+
+const isDisabled = defineEmits(['switch'])
+
+watch(taskName, (newName) => {
+    if (!!newName && !(/^\s*$/.test(newName))) {
+        isDisabled('switch', false);
+    } else {
+        isDisabled('switch', true);
+    }
+})
+
+
+defineExpose({
+    saveTask, taskName
+})
 
 </script>

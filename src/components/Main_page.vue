@@ -14,12 +14,12 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <addTask />
+                            <addTask ref="rSave" @switch="switchDisabled" />
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-success">Save</button>
-                            <!-- TODO save add task form data from addTask to firestoredb -->
+                            <button type="button" class="btn btn-success" :disabled="isDisabled" data-bs-dismiss="modal"
+                                @click="saveData()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -27,7 +27,7 @@
         </div>
 
         <div class="row mt-3">
-            <div class="col-2 bg-info text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+            <div class="col-2 rounded pt-1 bg-info text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                 @click="addTaskClicked()">
                 add task
             </div>
@@ -56,39 +56,42 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <div class="row p-3 mt-2 bg-dark-subtle" v-for="i in 3">
+                <div class="row rounded  p-3 mt-2 bg-warning" v-for="i in 3">
                     <!-- TODO sort data, add the different document -->
                     sort by {{ i }}
                 </div>
             </div>
 
             <div :class="[columnLength]">
-                <div class="row p-3 ms-1 mt-2 bg-dark-subtle" v-for="i in 9" @click="taskClicked(i)">
+                <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="(task, index) in tasks"
+                    @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <!-- TODO show data from db -->
-                        taskname: verylongname
+                        <span class="text-break">{{ task.name }}</span>
                     </div>
                     <div class="col-8" v-if="!showDetails">
-                        <!-- TODO show description from db -->
-                        task description:
+                        {{ task.description }}
                     </div>
                 </div>
             </div>
 
             <div class="col-6 mt-2" v-if="showDetails == true">
                 <div class="card p-3 bg-light">
-                    <!-- TODO show data details -->
-                    <!-- TODO figure out how to display file/image -->
 
-                    task_name : 'task_name',
-                    task_description : 'task_description',
-                    file : object,
-                    due_date : datetimeString,
-                    remind_date : datetimeString,
-                    priority : 'low, med, high',
-                    status : 'checked, not_checked,
+                    <!-- TODO close button -->
+                    <!-- TODO check button -->
+                    <!-- TODO edit button -->
+                    <!-- TODO delete button -->
+
+                    <h2>{{ selectedTaskDetails.name }}</h2>
+                    <p>{{ selectedTaskDetails.description }}</p>
+                    <span v-if="!!selectedTaskDetails.dueDate"><strong>Due Date:</strong> {{ selectedTaskDetails.dueDate }}</span>
+                    <span v-if="!!selectedTaskDetails.remindDate"><strong>Reminder:</strong> {{ selectedTaskDetails.remindDate }}</span>
+                    <span><strong>Priority:</strong> {{ selectedTaskDetails.priority }}</span>
                     <br>
-                    picture
+                    <!-- TODO: display file -->
+                    <div>
+                        {{ selectedTaskDetails.file }}
+                    </div>
 
                 </div>
             </div>
@@ -101,23 +104,44 @@
 import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
+import { tasks } from './firebase/firestoredb'
 
 const username = ref(useUidStore().user.displayName)
+
 
 let columnLength = ref("col-10")
 let taskNameColumnLength = ref("col-4")
 let showDetails = false
-const taskClicked = (i) => {
+
+const selectedTaskDetails = ref()
+const taskClicked = (task) => {
     taskNameColumnLength = "col-12"
     columnLength.value = "col-4"
     showDetails = true
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+
+    selectedTaskDetails.value = task
 }
+
 
 
 let addingTask = ref(false)
 const addTaskClicked = () => {
     addingTask.value = true
 }
+const rSave = ref()
+const isDisabled = ref(true)
+const saveData = () => {
+    rSave.value.saveTask()
+}
+const switchDisabled = (val) => {
+    isDisabled.value = val
+}
+
 
 
 </script>
