@@ -74,7 +74,7 @@ const taskName = ref(null)
 const taskDescription = ref(null)
 const taskDueDate = ref(null)
 const taskRemind = ref(null)
-const taskPriority = ref(null)
+const taskPriority = ref('none')
 // <!-- TODO upload file to firestore -->
 const taskFile = ref(null)
 const taskFinish = ref(false)
@@ -93,6 +93,14 @@ const saveTask = () => {
         finished: taskFinish.value
     }
     addTaskToDb(task)
+
+    taskName.value = null
+    taskDescription.value = null
+    taskDueDate.value = null
+    taskRemind.value = null
+    taskPriority.value = 'none'
+    taskFile.value = null
+    taskFinish.value = false
 }
 
 const isDisabled = defineEmits(['switch'])

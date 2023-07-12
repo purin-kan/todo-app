@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <h2>{{ useUidStore().user.displayName }}'s ToDo List</h2>
+            <h2>{{ useUidStore().username }}'s ToDo List</h2>
         </div>
 
         <div class="row" v-if="addingTask">
@@ -69,7 +69,10 @@
                 <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="(task, index) in tasks"
                     @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <span class="text-break">{{ task.name }}</span>
+                        <span class="text-break" v-if="task.priority=='none'">{{ task.name }}</span>
+                        <h5 class="text-break" v-if="task.priority=='low'">{{ task.name }}</h5>
+                        <h4 class="text-break" v-if="task.priority=='med'">{{ task.name }}</h4>
+                        <h3 class="text-break" v-if="task.priority=='high'">{{ task.name }}</h3>
                     </div>
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
@@ -105,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
 import { tasks } from './firebase/firestoredb'

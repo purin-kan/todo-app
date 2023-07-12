@@ -11,6 +11,7 @@ export const authentication = async () => {
     const result = await signInWithPopup(auth, provider);
     useUidStore().user = result.user
     useUidStore().uid = result.user.uid
+    useUidStore().username = result.user.displayName
 
   } catch (error) {
     const errorCode = error.code;
@@ -31,8 +32,9 @@ export const signOut = async () => {
   try {
     await fireBaseSignOut(auth)
     
-    useUidStore().uid = null
     useUidStore().user = null
+    useUidStore().uid = null
+
   } catch (error) {
     console.log('sign out failed', error);
   };

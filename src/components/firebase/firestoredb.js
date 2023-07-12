@@ -24,7 +24,7 @@ export const findAccount = async () => {
             description: 'press the "add task" button',
             dueDate: null,
             remindDate: null,
-            priority: 'high',
+            priority: 'med',
             file: null,
             finished: false,
         };
@@ -50,12 +50,12 @@ export const fetchData = async () => {
         let task = doc.data();
         tasks.value.push(task);
     });
-
-    // console.log('Fetched tasks:', tasks);
 }
 
 
 export const addTaskToDb = async (task) => {
+    const timestamp = new Date();
+    const ictTime = new Date(timestamp.getTime() + (7 * 60 * 60 * 1000));
     const taskData = {
         name: task.name,
         description: task.description,
@@ -64,6 +64,7 @@ export const addTaskToDb = async (task) => {
         priority: task.priority,
         file: task.file,
         finished: task.finished,
+        timestamp: ictTime.toISOString()
     };
 
     const documentRef = doc(db, 'todo', useUidStore().uid);
