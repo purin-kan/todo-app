@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <h2>{{ username }}'s ToDo List</h2>
+            <h2>{{ useUidStore().user.displayName }}'s ToDo List</h2>
         </div>
 
         <div class="row" v-if="addingTask">
@@ -56,9 +56,12 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <div class="row rounded  p-3 mt-2 bg-warning" v-for="i in 3">
+                <div class="row rounded  p-2 mt-2 bg-warning" v-for="i in 3">
                     <!-- TODO sort data, add the different document -->
-                    sort by {{ i }}
+                    <span class="text-center">sort by: {{ i }}</span>
+                </div>
+                <div class="row rounded p-2 mt-5 bg-danger text-white" @click="signOutClicked()">
+                    <span class="text-center">Sign-out</span>
                 </div>
             </div>
 
@@ -84,8 +87,10 @@
 
                     <h2>{{ selectedTaskDetails.name }}</h2>
                     <p>{{ selectedTaskDetails.description }}</p>
-                    <span v-if="!!selectedTaskDetails.dueDate"><strong>Due Date:</strong> {{ selectedTaskDetails.dueDate }}</span>
-                    <span v-if="!!selectedTaskDetails.remindDate"><strong>Reminder:</strong> {{ selectedTaskDetails.remindDate }}</span>
+                    <span v-if="!!selectedTaskDetails.dueDate"><strong>Due Date:</strong> {{ selectedTaskDetails.dueDate
+                    }}</span>
+                    <span v-if="!!selectedTaskDetails.remindDate"><strong>Reminder:</strong> {{
+                        selectedTaskDetails.remindDate }}</span>
                     <span><strong>Priority:</strong> {{ selectedTaskDetails.priority }}</span>
                     <br>
                     <!-- TODO: display file -->
@@ -95,18 +100,18 @@
 
                 </div>
             </div>
-
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
 import { tasks } from './firebase/firestoredb'
-
-const username = ref(useUidStore().user.displayName)
+import { signOut } from './firebase/auth'
+import { useRouter } from "vue-router"
+const router = useRouter()
 
 
 let columnLength = ref("col-10")
@@ -142,16 +147,10 @@ const switchDisabled = (val) => {
     isDisabled.value = val
 }
 
+const signOutClicked = async () => {
+    await signOut()
+    router.push('/')
+}
 
 
 </script>
-
-<style>
-body {
-    display: block;
-    background-color: whitesmoke;
-    text-align: start;
-    align-items: flex-start;
-
-}
-</style>

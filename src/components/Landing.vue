@@ -13,7 +13,6 @@
 import { authentication } from '../components/firebase/auth'
 import { findAccount } from '../components/firebase/firestoredb'
 import { useRouter } from "vue-router"
-
 const router = useRouter()
 
 

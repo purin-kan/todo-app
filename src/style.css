@@ -14,7 +14,7 @@
   -webkit-text-size-adjust: 100%;
 }
 
-body {
+.landing-body {
   margin: 0;
   display: flex;
   /* justify-content: center; */
@@ -24,6 +24,16 @@ body {
   
   text-align: center;
   align-items: center;
+}
+
+.main-body {
+    display: block;
+    background-color: whitesmoke;
+    text-align: start;
+    align-items: flex-start;
+    min-width: 320px;
+    min-height: 100vh;
+
 }
 
 

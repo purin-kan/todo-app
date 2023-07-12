@@ -6,12 +6,18 @@ const router = createRouter({
         {
             path: '/',
             name: 'Landing',
-            component: () => import('../src/components/Landing.vue')
+            component: () => import('../src/components/Landing.vue'),
+            meta: {
+                bodyClass: 'landing-body',
+            },
         },
         {
             path: '/main',
             name: 'Main-page',
-            component: () => import('../src/components/Main_page.vue')
+            component: () => import('../src/components/Main_page.vue'),
+            meta: {
+                bodyClass: 'main-body',
+            },
         },
     ],
 });
