@@ -111,6 +111,7 @@ const saveTask = async () => {
     }
     addTaskToDb(task)
 
+    file.value.value = null
     taskName.value = null
     taskDescription.value = null
     taskDueDate.value = null
