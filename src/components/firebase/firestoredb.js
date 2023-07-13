@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc } from "firebase/firestore";
 import { app } from './firebase'
 import { useUidStore } from '../../stores/store';
 import { ref } from 'vue'
@@ -19,6 +19,8 @@ export const findAccount = async () => {
         });
         console.log('user created');
 
+        const timestamp = new Date();
+        const ictTime = new Date(timestamp.getTime() + (7 * 60 * 60 * 1000));
         const taskData = {
             name: 'Add a task!',
             description: 'press the "add task" button',
@@ -26,14 +28,23 @@ export const findAccount = async () => {
             remindDate: null,
             priority: 'med',
             file: null,
+            isImage: false,
             finished: false,
+            timestamp: ictTime.toISOString(),
+            taskId: null
         };
-    
+
         const documentRef = doc(db, 'todo', useUidStore().uid);
         const tasksRef = collection(documentRef, 'tasks');
-    
-        await addDoc(tasksRef, taskData);
-    
+
+        const docRef = await addDoc(tasksRef, taskData);
+        const taskId = docRef.id;
+
+        await updateDoc(docRef, {
+            taskId: taskId
+        });
+
+
         fetchData()
     }
 }
@@ -65,13 +76,31 @@ export const addTaskToDb = async (task) => {
         file: task.file,
         isImage: task.fileIsImage,
         finished: task.finished,
-        timestamp: ictTime.toISOString()
+        timestamp: ictTime.toISOString(),
+        taskId: null
     };
 
     const documentRef = doc(db, 'todo', useUidStore().uid);
     const tasksRef = collection(documentRef, 'tasks');
 
-    await addDoc(tasksRef, taskData);
+    const docRef = await addDoc(tasksRef, taskData);
+    const taskId = docRef.id;
 
-    fetchData()
+    await updateDoc(docRef, {
+        taskId: taskId
+    });
+
+    fetchData();
 };
+
+
+export const finishTask = async (taskId) => {
+
+    //find task and modify status
+    // change "finished" to true
+}
+export const unFinishTask = async (taskId) => {
+
+    //find task and modify status
+    // change "finished" to false
+}

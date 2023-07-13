@@ -22,4 +22,7 @@ const router = createRouter({
     ],
 });
 
+
+//TODO: REFRESH: return to landing page on refresh.
+
 export default router;

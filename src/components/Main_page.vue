@@ -56,7 +56,7 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <div class="row rounded  p-2 mt-2 bg-warning" v-for="i in 3">
+                <div class="row rounded  p-2 mt-2 bg-warning" v-for="i in 5">
                     <!-- TODO sort data, add the different document -->
                     <span class="text-center">sort by: {{ i }}</span>
                 </div>
@@ -66,8 +66,7 @@
             </div>
 
             <div :class="[columnLength]">
-                <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="(task, index) in tasks"
-                    @click="taskClicked(task)">
+                <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="task in tasks" @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
                         <span class="text-break" v-if="task.priority == 'none'">{{ task.name }}</span>
                         <h5 class="text-break" v-if="task.priority == 'low'">{{ task.name }}</h5>
@@ -83,12 +82,34 @@
             <div class="col-6 mt-2" v-if="showDetails == true">
                 <div class="card p-3 bg-light">
 
-                    <!-- TODO close button -->
                     <!-- TODO check button -->
                     <!-- TODO edit button -->
                     <!-- TODO delete button -->
+                    <div class="row mb-3 justify-content-center" v-if="showMenu">
+                        <button class="col-3 btn btn-outline-secondary text-center">
+                            Edit
+                        </button>
+                        <button class="col-3 btn btn-outline-danger text-center ms-2 me-1">
+                            Delete
+                        </button>
+                        <button class="col-2 btn btn-outline-success text-center me-2 ms-1"
+                            v-if="!selectedTaskDetails.status" @click="finishTask(selectedTaskDetails.taskId)">
+                            ✓
+                        </button>
+                        <button class="col-2 btn btn-outline-danger text-center" v-if="selectedTaskDetails.status"
+                            @click="unFinishTask(selectedTaskDetails.taskId)">
+                            ✗
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-9">
+                            <h2>{{ selectedTaskDetails.name }}</h2>
+                        </div>
+                        <div class="col-3">
+                            <div class="p-1 text-center rounded bg-secondary-subtle" @click="menuToggle()">☰</div>
+                        </div>
+                    </div>
 
-                    <h2>{{ selectedTaskDetails.name }}</h2>
                     <p>{{ selectedTaskDetails.description }}</p>
                     <span v-if="!!selectedTaskDetails.dueDate"><strong>Due Date:</strong> {{ selectedTaskDetails.dueDate
                     }}</span>
@@ -114,7 +135,7 @@
 import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
-import { tasks } from './firebase/firestoredb'
+import { tasks, finishTask, unFinishTask } from './firebase/firestoredb'
 import { signOut } from './firebase/auth'
 import { useRouter } from "vue-router"
 const router = useRouter()
@@ -126,17 +147,33 @@ let showDetails = false
 
 const selectedTaskDetails = ref()
 const taskClicked = (task) => {
-    taskNameColumnLength = "col-12"
-    columnLength.value = "col-4"
-    showDetails = true
+    if (selectedTaskDetails.value == task) {
+        columnLength.value = "col-10"
+        taskNameColumnLength.value = "col-4"
+        showDetails = false
 
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
+        selectedTaskDetails.value = null
+    } else {
+        taskNameColumnLength.value = "col-12"
+        columnLength.value = "col-4"
+        showDetails = true
 
-    selectedTaskDetails.value = task
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+        selectedTaskDetails.value = task
+    }
+    showMenu.value = false
 }
+
+
+const showMenu = ref(false)
+const menuToggle = () => {
+    showMenu.value = !showMenu.value
+}
+
 
 
 
