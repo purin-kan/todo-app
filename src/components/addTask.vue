@@ -133,8 +133,24 @@ watch(taskName, (newName) => {
 })
 
 
+const editTask = (taskDetail) => {
+    console.log(taskDetail);
+    
+    // file.value.value = taskDetail.file
+    // taskName.value = taskDetail.name
+    // taskDescription.value = taskDetail.description
+    // taskDueDate.value = taskDetail
+    // taskRemind.value = taskDetail
+    // taskPriority.value = taskDetail
+    // taskFile.value = taskDetail
+    // taskFileIsImage.value = taskDetail
+    // taskFinish.value = taskDetail
+}
+
+
+
 defineExpose({
-    saveTask, taskName
+    saveTask, taskName, editTask
 })
 
 </script>

@@ -4,22 +4,25 @@
             <h2>{{ useUidStore().username }}'s ToDo List</h2>
         </div>
 
-        <div class="row" v-if="addingTask">
+        <div class="row" v-if="addingTask || editingTask">
             <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                 aria-labelledby="staticBackdropLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Add Task</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">{{ addingTask ? 'Add' : 'Edit' }} Task
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                @click="doneWithModal()"></button>
                         </div>
                         <div class="modal-body">
                             <addTask ref="rSave" @switch="switchDisabled" />
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+                                @click="doneWithModal()">Cancel</button>
                             <button type="button" class="btn btn-success" :disabled="isDisabled" data-bs-dismiss="modal"
-                                @click="saveData()">Save</button>
+                                @click="addingTask ? saveData() : saveEdit()">Save {{ addingTask ? '' : 'Edit' }}</button>
                         </div>
                     </div>
                 </div>
@@ -68,10 +71,14 @@
             <div :class="[columnLength]">
                 <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="task in tasks" @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <span class="text-break " :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'none'">{{ task.name }}</span>
-                        <h5 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'low'">{{ task.name }}</h5>
-                        <h4 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'med'">{{ task.name }}</h4>
-                        <h3 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'high'">{{ task.name }}</h3>
+                        <span class="text-break " :class="task.finished == true ? 'text-decoration-line-through' : ''"
+                            v-if="task.priority == 'none'">{{ task.name }}</span>
+                        <h5 class="text-break" :class="task.finished == true ? 'text-decoration-line-through' : ''"
+                            v-if="task.priority == 'low'">{{ task.name }}</h5>
+                        <h4 class="text-break" :class="task.finished == true ? 'text-decoration-line-through' : ''"
+                            v-if="task.priority == 'med'">{{ task.name }}</h4>
+                        <h3 class="text-break" :class="task.finished == true ? 'text-decoration-line-through' : ''"
+                            v-if="task.priority == 'high'">{{ task.name }}</h3>
                     </div>
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
@@ -82,14 +89,15 @@
             <div class="col-6 mt-2" v-if="showDetails == true">
                 <div class="card p-3 bg-light">
 
-                    <!-- TODO check button -->
                     <!-- TODO edit button -->
-                    <!-- TODO delete button -->
                     <div class="row mb-3 justify-content-center" v-if="showMenu">
-                        <button class="col-3 btn btn-outline-secondary text-center">
+                        <button class="col-3 btn btn-outline-secondary text-center"
+                            @click="editClicked(selectedTaskDetails)" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop">
                             Edit
                         </button>
-                        <button class="col-3 btn btn-outline-danger text-center ms-2 me-1" @click="deleteTask(selectedTaskDetails.taskId)">
+                        <button class="col-3 btn btn-outline-danger text-center ms-2 me-1"
+                            @click="deleteTask(selectedTaskDetails.taskId)">
                             Delete
                         </button>
                         <button class="col-2 btn btn-outline-success text-center me-2 ms-1"
@@ -103,7 +111,8 @@
                     </div>
                     <div class="row">
                         <div class="col-9">
-                            <h2 :class="selectedTaskDetails.finished==true?'text-decoration-line-through':''">{{ selectedTaskDetails.name }}</h2>
+                            <h2 :class="selectedTaskDetails.finished == true ? 'text-decoration-line-through' : ''">{{
+                                selectedTaskDetails.name }}</h2>
                         </div>
                         <div class="col-3">
                             <div class="p-1 text-center rounded bg-secondary-subtle" @click="menuToggle()">☰</div>
@@ -144,11 +153,10 @@ const router = useRouter()
 let columnLength = ref("col-10")
 let taskNameColumnLength = ref("col-4")
 let showDetails = false
-
 const selectedTaskDetails = ref()
 const taskClicked = (task) => {
     if (selectedTaskDetails.value == task) {
-        resetDetailTab()
+        hideDetailTab()
     } else {
         taskNameColumnLength.value = "col-12"
         columnLength.value = "col-4"
@@ -164,7 +172,7 @@ const taskClicked = (task) => {
     showMenu.value = false
 }
 
-const resetDetailTab = () => {
+const hideDetailTab = () => {
     columnLength.value = "col-10"
     taskNameColumnLength.value = "col-4"
     showDetails = false
@@ -180,28 +188,47 @@ const menuToggle = () => {
 
 const markTask = (taskId, status) => {
     setTaskStatus(taskId, status)
-    resetDetailTab()
+    hideDetailTab()
 }
 
 const deleteTask = (taskId) => {
     deleteTaskFromDb(taskId)
-    resetDetailTab()
+    hideDetailTab()
 }
-
 
 
 let addingTask = ref(false)
 const addTaskClicked = () => {
     addingTask.value = true
 }
+const doneWithModal = () => {
+    addingTask.value = false
+    editingTask.value = false
+}
+
 const rSave = ref()
 const isDisabled = ref(true)
 const saveData = () => {
     rSave.value.saveTask()
+    doneWithModal()
 }
 const switchDisabled = (val) => {
     isDisabled.value = val
 }
+const editingTask = ref(false)
+const editingTaskId = ref()
+const editClicked = (taskDetail) => {
+    editingTask.value = true
+    editingTaskId.value = taskDetail.taskId
+    rSave.value.editTask(taskDetail)
+}
+const saveEdit = () => {
+    //(editingTaskId)
+    // call firestore or addTask and send id
+
+    editingTask.value = false
+}
+
 
 const signOutClicked = async () => {
     await signOut()
