@@ -94,13 +94,14 @@ export const addTaskToDb = async (task) => {
 };
 
 
-export const finishTask = async (taskId) => {
+export const setTaskStatus = async (taskId, status) => {
+    const documentRef = doc(db, 'todo', useUidStore().uid);
+    const tasksRef = collection(documentRef, 'tasks');
+    const taskDocRef = doc(tasksRef, taskId);
 
-    //find task and modify status
-    // change "finished" to true
-}
-export const unFinishTask = async (taskId) => {
+    await updateDoc(taskDocRef, {
+        finished: status
+    });
 
-    //find task and modify status
-    // change "finished" to false
+    fetchData()
 }

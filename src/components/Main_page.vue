@@ -68,10 +68,10 @@
             <div :class="[columnLength]">
                 <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="task in tasks" @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <span class="text-break" v-if="task.priority == 'none'">{{ task.name }}</span>
-                        <h5 class="text-break" v-if="task.priority == 'low'">{{ task.name }}</h5>
-                        <h4 class="text-break" v-if="task.priority == 'med'">{{ task.name }}</h4>
-                        <h3 class="text-break" v-if="task.priority == 'high'">{{ task.name }}</h3>
+                        <span class="text-break " :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'none'">{{ task.name }}</span>
+                        <h5 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'low'">{{ task.name }}</h5>
+                        <h4 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'med'">{{ task.name }}</h4>
+                        <h3 class="text-break" :class="task.finished==true?'text-decoration-line-through':''" v-if="task.priority == 'high'">{{ task.name }}</h3>
                     </div>
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
@@ -93,17 +93,17 @@
                             Delete
                         </button>
                         <button class="col-2 btn btn-outline-success text-center me-2 ms-1"
-                            v-if="!selectedTaskDetails.status" @click="finishTask(selectedTaskDetails.taskId)">
+                            v-if="!selectedTaskDetails.finished" @click="markTask(selectedTaskDetails.taskId, true)">
                             ✓
                         </button>
-                        <button class="col-2 btn btn-outline-danger text-center" v-if="selectedTaskDetails.status"
-                            @click="unFinishTask(selectedTaskDetails.taskId)">
+                        <button class="col-2 btn btn-outline-danger text-center" v-if="selectedTaskDetails.finished"
+                            @click="markTask(selectedTaskDetails.taskId, false)">
                             ✗
                         </button>
                     </div>
                     <div class="row">
                         <div class="col-9">
-                            <h2>{{ selectedTaskDetails.name }}</h2>
+                            <h2 :class="selectedTaskDetails.finished==true?'text-decoration-line-through':''">{{ selectedTaskDetails.name }}</h2>
                         </div>
                         <div class="col-3">
                             <div class="p-1 text-center rounded bg-secondary-subtle" @click="menuToggle()">☰</div>
@@ -135,7 +135,7 @@
 import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
-import { tasks, finishTask, unFinishTask } from './firebase/firestoredb'
+import { tasks, setTaskStatus } from './firebase/firestoredb'
 import { signOut } from './firebase/auth'
 import { useRouter } from "vue-router"
 const router = useRouter()
@@ -148,11 +148,7 @@ let showDetails = false
 const selectedTaskDetails = ref()
 const taskClicked = (task) => {
     if (selectedTaskDetails.value == task) {
-        columnLength.value = "col-10"
-        taskNameColumnLength.value = "col-4"
-        showDetails = false
-
-        selectedTaskDetails.value = null
+        resetDetailTab()
     } else {
         taskNameColumnLength.value = "col-12"
         columnLength.value = "col-4"
@@ -168,11 +164,25 @@ const taskClicked = (task) => {
     showMenu.value = false
 }
 
+const resetDetailTab = () => {
+    columnLength.value = "col-10"
+    taskNameColumnLength.value = "col-4"
+    showDetails = false
+
+    selectedTaskDetails.value = null
+}
+
 
 const showMenu = ref(false)
 const menuToggle = () => {
     showMenu.value = !showMenu.value
 }
+
+const markTask = (taskId, status) => {
+    setTaskStatus(taskId, status)
+    resetDetailTab()
+}
+
 
 
 
