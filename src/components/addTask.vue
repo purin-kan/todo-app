@@ -83,7 +83,7 @@ const taskFinish = ref(false)
 const file = ref()
 
 const resetValues = () => {
-    file.value.value = null
+    file.value = null
     taskName.value = null
     taskDescription.value = null
     taskDueDate.value = null
@@ -174,6 +174,8 @@ const saveEdit = async () => {
     }
 
     editTaskdb(taskId, task)
+
+    taskId = null
 
     resetValues()
 

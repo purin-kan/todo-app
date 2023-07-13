@@ -30,8 +30,8 @@
         </div>
 
         <div class="row mt-3">
-            <div class="col-2 rounded pt-1 bg-info text-center" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                @click="addTaskClicked()">
+            <div class="col-2 rounded pt-1 bg-info text-center" style="--bs-bg-opacity: .7;" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop" @click="addTaskClicked()">
                 add task
             </div>
 
@@ -59,7 +59,7 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <div class="row rounded  p-2 mt-2 bg-warning" v-for="i in 5">
+                <div class="row rounded  p-2 mt-2 bg-warning" style="--bs-bg-opacity: .5;" v-for="i in 5">
                     <!-- TODO sort data, add the different document -->
                     <span class="text-center">sort by: {{ i }}</span>
                 </div>
