@@ -69,10 +69,10 @@
                 <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="(task, index) in tasks"
                     @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <span class="text-break" v-if="task.priority=='none'">{{ task.name }}</span>
-                        <h5 class="text-break" v-if="task.priority=='low'">{{ task.name }}</h5>
-                        <h4 class="text-break" v-if="task.priority=='med'">{{ task.name }}</h4>
-                        <h3 class="text-break" v-if="task.priority=='high'">{{ task.name }}</h3>
+                        <span class="text-break" v-if="task.priority == 'none'">{{ task.name }}</span>
+                        <h5 class="text-break" v-if="task.priority == 'low'">{{ task.name }}</h5>
+                        <h4 class="text-break" v-if="task.priority == 'med'">{{ task.name }}</h4>
+                        <h3 class="text-break" v-if="task.priority == 'high'">{{ task.name }}</h3>
                     </div>
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
@@ -94,12 +94,14 @@
                     }}</span>
                     <span v-if="!!selectedTaskDetails.remindDate"><strong>Reminder:</strong> {{
                         selectedTaskDetails.remindDate }}</span>
-                    <span v-if="selectedTaskDetails.priority != 'none'"><strong>Priority:</strong> {{ selectedTaskDetails.priority }}</span>
+                    <span v-if="selectedTaskDetails.priority != 'none'"><strong>Priority:</strong> {{
+                        selectedTaskDetails.priority }}</span>
                     <br>
-                    <!-- TODO: display file check if image and show-->
                     <div>
-                        
-                        <a v-if="!!selectedTaskDetails.file" class="btn btn-outline-dark btn-sm" :href="[selectedTaskDetails.file]" target="_blank">Download File</a>
+                        <a v-if="!!selectedTaskDetails.file" class="btn btn-outline-dark btn-sm"
+                            :href="[selectedTaskDetails.file]" target="_blank">Download File</a>
+                        <img v-if="selectedTaskDetails.isImage" :src="selectedTaskDetails.file"
+                            class="img-fluid text-center rounded mt-3">
                     </div>
 
                 </div>

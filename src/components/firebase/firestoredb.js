@@ -63,6 +63,7 @@ export const addTaskToDb = async (task) => {
         remindDate: task.remindDate,
         priority: task.priority,
         file: task.file,
+        isImage: task.fileIsImage,
         finished: task.finished,
         timestamp: ictTime.toISOString()
     };

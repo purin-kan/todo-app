@@ -77,6 +77,7 @@ const taskDueDate = ref(null)
 const taskRemind = ref(null)
 const taskPriority = ref('none')
 const taskFile = ref(null)
+const taskFileIsImage = ref(false)
 const taskFinish = ref(false)
 
 
@@ -89,6 +90,9 @@ const saveTask = async () => {
         selectedfile = file.value.files[0];
     
         await saveFile(selectedfile)
+        if (selectedfile.type === 'image/jpeg' || selectedfile.type === 'image/png') {
+            taskFileIsImage.value = true
+        }
         taskFile.value = downloadURL
     }
 
@@ -102,6 +106,7 @@ const saveTask = async () => {
         remindDate: taskRemind.value,
         priority: taskPriority.value,
         file: taskFile.value,
+        fileIsImage: taskFileIsImage.value,
         finished: taskFinish.value
     }
     addTaskToDb(task)
@@ -112,6 +117,7 @@ const saveTask = async () => {
     taskRemind.value = null
     taskPriority.value = 'none'
     taskFile.value = null
+    taskFileIsImage.value = false
     taskFinish.value = false
 }
 
