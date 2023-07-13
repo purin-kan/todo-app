@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc  } from "firebase/firestore";
 import { app } from './firebase'
 import { useUidStore } from '../../stores/store';
 import { ref } from 'vue'
@@ -51,7 +51,7 @@ export const findAccount = async () => {
 
 
 export const tasks = ref([])
-export const fetchData = async () => {
+export const fetchData = async (sort = null) => {
     tasks.value = []
     const documentRef = doc(db, 'todo', useUidStore().uid);
     const tasksRef = collection(documentRef, 'tasks');
@@ -61,6 +61,10 @@ export const fetchData = async () => {
         let task = doc.data();
         tasks.value.push(task);
     });
+
+    //if (!!sort){
+    // 
+    // } 
 }
 
 
@@ -103,5 +107,14 @@ export const setTaskStatus = async (taskId, status) => {
         finished: status
     });
 
+    fetchData()
+}
+
+
+export const deleteTaskFromDb = async (taskId) => {
+    const documentRef = doc(db, 'todo', useUidStore().uid);
+    const tasksRef = collection(documentRef, 'tasks');
+    const taskDocRef = doc(tasksRef, taskId);
+    await deleteDoc(taskDocRef);
     fetchData()
 }

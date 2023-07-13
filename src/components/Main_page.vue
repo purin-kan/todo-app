@@ -89,7 +89,7 @@
                         <button class="col-3 btn btn-outline-secondary text-center">
                             Edit
                         </button>
-                        <button class="col-3 btn btn-outline-danger text-center ms-2 me-1">
+                        <button class="col-3 btn btn-outline-danger text-center ms-2 me-1" @click="deleteTask(selectedTaskDetails.taskId)">
                             Delete
                         </button>
                         <button class="col-2 btn btn-outline-success text-center me-2 ms-1"
@@ -135,7 +135,7 @@
 import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
-import { tasks, setTaskStatus } from './firebase/firestoredb'
+import { tasks, setTaskStatus, deleteTaskFromDb } from './firebase/firestoredb'
 import { signOut } from './firebase/auth'
 import { useRouter } from "vue-router"
 const router = useRouter()
@@ -183,7 +183,10 @@ const markTask = (taskId, status) => {
     resetDetailTab()
 }
 
-
+const deleteTask = (taskId) => {
+    deleteTaskFromDb(taskId)
+    resetDetailTab()
+}
 
 
 
