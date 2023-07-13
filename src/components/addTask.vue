@@ -54,7 +54,7 @@
 
 <script setup>
 import { ref, defineExpose, defineEmits, watch } from 'vue'
-import { addTaskToDb } from './firebase/firestoredb'
+import { addTaskToDb, editTaskdb } from './firebase/firestoredb'
 import FlatPickr from 'vue-flatpickr-component';
 import 'flatpickr/dist/flatpickr.css';
 import { saveFile, downloadURL } from './firebase/storage';
@@ -80,24 +80,34 @@ const taskFile = ref(null)
 const taskFileIsImage = ref(false)
 const taskFinish = ref(false)
 
-
-
 const file = ref()
+
+const resetValues = () => {
+    file.value.value = null
+    taskName.value = null
+    taskDescription.value = null
+    taskDueDate.value = null
+    taskRemind.value = null
+    taskPriority.value = 'none'
+    taskFile.value = null
+    taskFileIsImage.value = false
+    taskFinish.value = false
+}
+
+
 let selectedfile = null
 const saveTask = async () => {
+
     selectedfile = null
     if (!!file.value.files[0]) {
         selectedfile = file.value.files[0];
-    
+
         await saveFile(selectedfile)
         if (selectedfile.type === 'image/jpeg' || selectedfile.type === 'image/png') {
             taskFileIsImage.value = true
         }
         taskFile.value = downloadURL
     }
-
-
-
 
     const task = {
         name: taskName.value,
@@ -111,15 +121,7 @@ const saveTask = async () => {
     }
     addTaskToDb(task)
 
-    file.value.value = null
-    taskName.value = null
-    taskDescription.value = null
-    taskDueDate.value = null
-    taskRemind.value = null
-    taskPriority.value = 'none'
-    taskFile.value = null
-    taskFileIsImage.value = false
-    taskFinish.value = false
+    resetValues()
 }
 
 const isDisabled = defineEmits(['switch'])
@@ -132,25 +134,55 @@ watch(taskName, (newName) => {
     }
 })
 
+let taskId = null
+const editTask = async (taskDetail) => {
+    taskId = taskDetail.taskId
 
-const editTask = (taskDetail) => {
-    console.log(taskDetail);
-    
-    // file.value.value = taskDetail.file
-    // taskName.value = taskDetail.name
-    // taskDescription.value = taskDetail.description
-    // taskDueDate.value = taskDetail
-    // taskRemind.value = taskDetail
-    // taskPriority.value = taskDetail
-    // taskFile.value = taskDetail
-    // taskFileIsImage.value = taskDetail
-    // taskFinish.value = taskDetail
+    taskName.value = taskDetail.name
+    taskDescription.value = taskDetail.description
+    taskDueDate.value = taskDetail.dueDate
+    taskRemind.value = taskDetail.remindDate
+    taskPriority.value = taskDetail.priority
+    taskFile.value = taskDetail.file
+    taskFileIsImage.value = taskDetail.isImage
+}
+
+const saveEdit = async () => {
+    if (!!file.value.files[0]) {
+        selectedfile = null
+
+        selectedfile = file.value.files[0];
+
+        await saveFile(selectedfile)
+        if (selectedfile.type === 'image/jpeg' || selectedfile.type === 'image/png') {
+            taskFileIsImage.value = true;
+        } else {
+            taskFileIsImage.value = false;
+        }
+
+        taskFile.value = downloadURL
+    }
+
+    const task = {
+        name: taskName.value,
+        description: taskDescription.value,
+        dueDate: taskDueDate.value,
+        remindDate: taskRemind.value,
+        priority: taskPriority.value,
+        file: taskFile.value,
+        fileIsImage: taskFileIsImage.value
+    }
+
+    editTaskdb(taskId, task)
+
+    resetValues()
+
 }
 
 
 
 defineExpose({
-    saveTask, taskName, editTask
+    saveTask, taskName, editTask, saveEdit
 })
 
 </script>

@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc  } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { app } from './firebase'
 import { useUidStore } from '../../stores/store';
 import { ref } from 'vue'
@@ -110,11 +110,29 @@ export const setTaskStatus = async (taskId, status) => {
     fetchData()
 }
 
-
 export const deleteTaskFromDb = async (taskId) => {
     const documentRef = doc(db, 'todo', useUidStore().uid);
     const tasksRef = collection(documentRef, 'tasks');
     const taskDocRef = doc(tasksRef, taskId);
     await deleteDoc(taskDocRef);
+    fetchData()
+}
+
+export const editTaskdb = async (taskId, task) => {
+    const documentRef = doc(db, 'todo', useUidStore().uid);
+    const tasksRef = collection(documentRef, 'tasks');
+    const taskDocRef = doc(tasksRef, taskId);
+
+
+    await updateDoc(taskDocRef, {
+        name: task.name,
+        description: task.description,
+        dueDate: task.dueDate,
+        remindDate: task.remindDate,
+        priority: task.priority,
+        file: task.file,
+        isImage: task.fileIsImage
+    });
+
     fetchData()
 }

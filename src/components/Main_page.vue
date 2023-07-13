@@ -88,8 +88,6 @@
 
             <div class="col-6 mt-2" v-if="showDetails == true">
                 <div class="card p-3 bg-light">
-
-                    <!-- TODO edit button -->
                     <div class="row mb-3 justify-content-center" v-if="showMenu">
                         <button class="col-3 btn btn-outline-secondary text-center"
                             @click="editClicked(selectedTaskDetails)" data-bs-toggle="modal"
@@ -216,17 +214,14 @@ const switchDisabled = (val) => {
     isDisabled.value = val
 }
 const editingTask = ref(false)
-const editingTaskId = ref()
 const editClicked = (taskDetail) => {
     editingTask.value = true
-    editingTaskId.value = taskDetail.taskId
     rSave.value.editTask(taskDetail)
 }
 const saveEdit = () => {
-    //(editingTaskId)
-    // call firestore or addTask and send id
-
+    rSave.value.saveEdit()
     editingTask.value = false
+    hideDetailTab()
 }
 
 
