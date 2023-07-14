@@ -59,9 +59,9 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <div class="row rounded  p-2 mt-2 bg-warning" style="--bs-bg-opacity: .5;" v-for="i in 5">
-                    <!-- TODO sort data, add the different document -->
-                    <span class="text-center">sort by: {{ i }}</span>
+                <!-- TODO sort data, add the different document -->
+                <div class="row rounded  p-2 mt-2 bg-warning" style="--bs-bg-opacity: .5;" v-for="sort in sortBy">
+                    <span class="text-center text-break" @click="fetchData(sort), hideDetailTab()">{{ sort }}</span>
                 </div>
                 <div class="row rounded p-2 mt-5 bg-danger text-white" @click="signOutClicked()">
                     <span class="text-center">Sign-out</span>
@@ -71,7 +71,7 @@
             <div :class="[columnLength]">
                 <div class="row rounded p-3 ms-1 mt-2 bg-dark-subtle" v-for="task in tasks" @click="taskClicked(task)">
                     <div :class="[taskNameColumnLength]">
-                        <span class="text-break " :class="task.finished == true ? 'text-decoration-line-through' : ''"
+                        <span class="text-break" :class="task.finished == true ? 'text-decoration-line-through' : ''"
                             v-if="task.priority == 'none'">{{ task.name }}</span>
                         <h5 class="text-break" :class="task.finished == true ? 'text-decoration-line-through' : ''"
                             v-if="task.priority == 'low'">{{ task.name }}</h5>
@@ -83,6 +83,7 @@
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
                     </div>
+                    {{ task }}
                 </div>
             </div>
 
@@ -142,11 +143,12 @@
 import { ref } from 'vue'
 import addTask from './addTask.vue'
 import { useUidStore } from '../stores/store';
-import { tasks, setTaskStatus, deleteTaskFromDb } from './firebase/firestoredb'
+import { tasks, setTaskStatus, deleteTaskFromDb, fetchData } from './firebase/firestoredb'
 import { signOut } from './firebase/auth'
 import { useRouter } from "vue-router"
 const router = useRouter()
 
+const sortBy = ref(['Recent', 'Oldest', '!', '!!', '!!!', 'Due Date', 'Remind Date', 'HasFile'])
 
 let columnLength = ref("col-10")
 let taskNameColumnLength = ref("col-4")
