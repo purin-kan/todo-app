@@ -66,8 +66,9 @@ const flatpickrConfig = {
     clickOpens: true,
     allowInput: false,
     enableTime: true,
-    // hour:minute(24h) date/month/year
-    dateFormat: 'H:i j\\/n\\/Y',
+    // https://flatpickr.js.org/formatting/
+    // year-month-date 24H:minute 
+    dateFormat: 'Y-n-j H:i',
     minDate: 'today',
 };
 

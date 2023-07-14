@@ -61,7 +61,7 @@
             <div class="col-2">
                 <!-- TODO sort data, add the different document -->
                 <div class="row rounded  p-2 mt-2 bg-warning" style="--bs-bg-opacity: .5;" v-for="sort in sortBy">
-                    <span class="text-center text-break" @click="fetchData(sort), hideDetailTab()">{{ sort }}</span>
+                    <span class="text-center text-break" @click="fetchData(sort), hideDetailTab()">{{ sort.name }}</span>
                 </div>
                 <div class="row rounded p-2 mt-5 bg-danger text-white" @click="signOutClicked()">
                     <span class="text-center">Sign-out</span>
@@ -83,7 +83,7 @@
                     <div class="col-8" v-if="!showDetails">
                         {{ task.description }}
                     </div>
-                    {{ task }}
+                    <!-- {{ task }} -->
                 </div>
             </div>
 
@@ -148,7 +148,16 @@ import { signOut } from './firebase/auth'
 import { useRouter } from "vue-router"
 const router = useRouter()
 
-const sortBy = ref(['Recent', 'Oldest', '!', '!!', '!!!', 'Due Date', 'Remind Date', 'HasFile'])
+const sortBy = ref([
+    { name: 'Recent', keySort: 'timestamp', sortBy: 'desc', type: 'sort' },
+    { name: 'Old', keySort: 'timestamp', sortBy: 'asc', type: 'sort' },
+    { name: 'Due', keySort: 'dueDate', sortBy: 'asc', type: 'sort' },
+    { name: 'Remind', keySort: 'remindDate', sortBy: 'asc', type: 'sort' },
+    { name: '!', keySort: 'priority', value: 'low', type: 'where'},
+    { name: '!!', keySort: 'priority', value: 'med', type: 'where'},
+    { name: '!!!', keySort: 'priority', value: 'high', type: 'where'},
+    { name: 'HasFile', keySort: 'file', type: 'file' },
+])
 
 let columnLength = ref("col-10")
 let taskNameColumnLength = ref("col-4")

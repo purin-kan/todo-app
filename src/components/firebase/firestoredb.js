@@ -1,4 +1,4 @@
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy, where } from "firebase/firestore";
 import { app } from './firebase'
 import { useUidStore } from '../../stores/store';
 import { ref } from 'vue'
@@ -59,28 +59,13 @@ export const fetchData = async (sort = null) => {
 
 
     if (!!sort) {
-        const hashmap = new Map();
-
-        hashmap.set('Recent', 'timestamp asc');
-        hashmap.set('Oldest', 'timestamp desc');
-        hashmap.set('!', 'priority');
-        hashmap.set('!!', 'priority');
-        hashmap.set('!!!', 'priority');
-        hashmap.set('Due Date', 'duedate ascending');
-        hashmap.set('Remind Date', 'remind date ascending');
-        hashmap.set('HasFile', 'hasfile?');
-
-        const orderByField = hashmap.get(sort);
-
-        if (orderByField === 'timestamp asc') {
-            tasksRef = query(tasksRef, orderBy("timestamp", "asc"))
-        } else if (orderByField === 'timestamp desc') {
-            tasksRef = query(tasksRef, orderBy("timestamp", "desc"))
-        } else if (orderByField === '') {
-            //more fields here...
+        if (sort.type === 'sort') {
+            tasksRef = query(tasksRef, orderBy(sort.keySort, sort.sortBy))
+        } else if (sort.type === 'where') {
+            tasksRef = query(tasksRef, where(sort.keySort, "==", sort.value));
+        } else if (sort.type === 'file') {
+            tasksRef = query(tasksRef, where(sort.keySort, "!=", null));
         }
-
-
     }
 
     const querySnapshot = await getDocs(tasksRef);
