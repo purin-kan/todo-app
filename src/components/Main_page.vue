@@ -59,7 +59,6 @@
         <div class="row mt-2">
 
             <div class="col-2">
-                <!-- TODO sort data, add the different document -->
                 <div class="row rounded  p-2 mt-2 bg-warning" style="--bs-bg-opacity: .5;" v-for="sort in sortBy">
                     <span class="text-center text-break" @click="fetchData(sort), hideDetailTab()">{{ sort.name }}</span>
                 </div>
@@ -153,9 +152,9 @@ const sortBy = ref([
     { name: 'Old', keySort: 'timestamp', sortBy: 'asc', type: 'sort' },
     { name: 'Due', keySort: 'dueDate', sortBy: 'asc', type: 'sort' },
     { name: 'Remind', keySort: 'remindDate', sortBy: 'asc', type: 'sort' },
-    { name: '!', keySort: 'priority', value: 'low', type: 'where'},
-    { name: '!!', keySort: 'priority', value: 'med', type: 'where'},
-    { name: '!!!', keySort: 'priority', value: 'high', type: 'where'},
+    { name: '!', keySort: 'priority', value: 'low', type: 'where' },
+    { name: '!!', keySort: 'priority', value: 'med', type: 'where' },
+    { name: '!!!', keySort: 'priority', value: 'high', type: 'where' },
     { name: 'HasFile', keySort: 'file', type: 'file' },
 ])
 
